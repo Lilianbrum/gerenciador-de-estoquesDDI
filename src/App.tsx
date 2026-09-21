@@ -699,25 +699,69 @@ function Movimentacoes({ products, movements, setMovements, users }: {
 // ─── Unidades ─────────────────────────────────────────────────────────────────
 function Unidades({ products }: { products: Product[] }) {
   const [unitsList, setUnitsList] = useState<Unit[]>(units);
-  const [modal, setModal] = useState<null | 'add-unit' | 'add-sector'>(null);
+  const [modal, setModal] = useState<null | 'add-unit' | 'add-sector' | 'del-unit'>(null);
   const [selectedUnit, setSelectedUnit] = useState<Unit | null>(null);
   const [form, setForm] = useState<{ name: string; code: string }>({ name: '', code: '' });
   const [sectorForm, setSectorForm] = useState({ name: '' });
 
   function addUnit() {
-    const nextId = Math.max(...unitsList.map(u => u.id)) + 1;
-    setUnitsList(prev => [...prev, { id: nextId, name: form.name, code: form.code, sectors: [] }]);
+    if (!form.name.trim() || !form.code.trim()) return;
+
+    const nextId = Math.max(0, ...unitsList.map(u => u.id)) + 1;
+
+    setUnitsList(prev => [
+      ...prev,
+      {
+        id: nextId,
+        name: form.name.trim(),
+        code: form.code.trim(),
+        sectors: [],
+      },
+    ]);
+
     setModal(null);
+    setForm({ name: '', code: '' });
   }
 
   function addSector() {
-    if (!selectedUnit) return;
+    if (!selectedUnit || !sectorForm.name.trim()) return;
+
     const allSectors = unitsList.flatMap(u => u.sectors);
-    const nextId = Math.max(...allSectors.map(s => s.id)) + 1;
-    setUnitsList(prev => prev.map(u => u.id === selectedUnit.id
-      ? { ...u, sectors: [...u.sectors, { id: nextId, unitId: u.id, name: sectorForm.name }] }
-      : u
-    ));
+    const nextId = Math.max(0, ...allSectors.map(s => s.id)) + 1;
+
+    setUnitsList(prev =>
+      prev.map(u =>
+        u.id === selectedUnit.id
+          ? {
+              ...u,
+              sectors: [
+                ...u.sectors,
+                {
+                  id: nextId,
+                  unitId: u.id,
+                  name: sectorForm.name.trim(),
+                },
+              ],
+            }
+          : u
+      )
+    );
+
+    setModal(null);
+    setSectorForm({ name: '' });
+  }
+
+  function openDeleteUnit(unit: Unit) {
+    setSelectedUnit(unit);
+    setModal('del-unit');
+  }
+
+  function deleteUnit() {
+    if (!selectedUnit) return;
+
+    setUnitsList(prev => prev.filter(u => u.id !== selectedUnit.id));
+
+    setSelectedUnit(null);
     setModal(null);
   }
 
@@ -725,11 +769,24 @@ function Unidades({ products }: { products: Product[] }) {
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold text-slate-900">Unidades e Setores</h2>
-          <p className="text-sm text-slate-500 mt-0.5">{unitsList.length} unidades • {unitsList.flatMap(u => u.sectors).length} setores</p>
+          <h2 className="text-xl font-bold text-slate-900">
+            Unidades e Setores
+          </h2>
+
+          <p className="text-sm text-slate-500 mt-0.5">
+            {unitsList.length} unidade{unitsList.length !== 1 ? 's' : ''} •{' '}
+            {unitsList.flatMap(u => u.sectors).length} setor
+            {unitsList.flatMap(u => u.sectors).length !== 1 ? 'es' : ''}
+          </p>
         </div>
-        <button onClick={() => { setForm({ name: '', code: '' }); setModal('add-unit'); }}
-          className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
+
+        <button
+          onClick={() => {
+            setForm({ name: '', code: '' });
+            setModal('add-unit');
+          }}
+          className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+        >
           + Nova Unidade
         </button>
       </div>
@@ -739,31 +796,80 @@ function Unidades({ products }: { products: Product[] }) {
           return (
             <Card key={unit.id} className="overflow-hidden">
               <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-blue-600 text-white rounded font-mono text-xs font-bold flex items-center justify-center">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-8 h-8 bg-blue-600 text-white rounded font-mono text-xs font-bold flex items-center justify-center shrink-0">
                     {unit.code}
                   </div>
-                  <div>
-                    <p className="font-semibold text-slate-900 text-sm">{unit.name}</p>
-                    <p className="text-xs text-slate-400">{unit.sectors.length} setor{unit.sectors.length !== 1 ? 'es' : ''}</p>
+
+                  <div className="min-w-0">
+                    <p className="font-semibold text-slate-900 text-sm truncate">
+                      {unit.name}
+                    </p>
+
+                    <p className="text-xs text-slate-400">
+                      {unit.sectors.length} setor
+                      {unit.sectors.length !== 1 ? 'es' : ''}
+                    </p>
                   </div>
                 </div>
-                <button onClick={() => { setSelectedUnit(unit); setSectorForm({ name: '' }); setModal('add-sector'); }}
-                  className="px-3 py-1.5 text-xs text-blue-600 border border-blue-200 rounded hover:bg-blue-50 transition-colors">
-                  + Setor
-                </button>
+
+                <div className="flex items-center gap-2 shrink-0">
+                  <button
+                    onClick={() => {
+                      setSelectedUnit(unit);
+                      setSectorForm({ name: '' });
+                      setModal('add-sector');
+                    }}
+                    className="px-3 py-1.5 text-xs text-blue-600 border border-blue-200 rounded hover:bg-blue-50 transition-colors"
+                  >
+                    + Setor
+                  </button>
+
+                  <button
+                    onClick={() => openDeleteUnit(unit)}
+                    className="px-3 py-1.5 text-xs text-red-600 border border-red-200 rounded hover:bg-red-50 transition-colors"
+                  >
+                    Excluir
+                  </button>
+                </div>
               </div>
+
               <div className="divide-y divide-slate-50">
                 {unit.sectors.map(s => (
-                  <div key={s.id} className="px-5 py-3 flex items-center justify-between hover:bg-slate-50/50 transition-colors">
-                    <span className="text-sm text-slate-700">{s.name}</span>
-                    <button onClick={() => setUnitsList(prev => prev.map(u => u.id === unit.id
-                      ? { ...u, sectors: u.sectors.filter(x => x.id !== s.id) } : u))}
-                      className="text-xs text-red-400 hover:text-red-600 transition-colors">Remover</button>
+                  <div
+                    key={s.id}
+                    className="px-5 py-3 flex items-center justify-between hover:bg-slate-50/50 transition-colors"
+                  >
+                    <span className="text-sm text-slate-700">
+                      {s.name}
+                    </span>
+
+                    <button
+                      onClick={() =>
+                        setUnitsList(prev =>
+                          prev.map(u =>
+                            u.id === unit.id
+                              ? {
+                                  ...u,
+                                  sectors: u.sectors.filter(
+                                    x => x.id !== s.id
+                                  ),
+                                }
+                              : u
+                          )
+                        )
+                      }
+                      className="text-xs text-red-400 hover:text-red-600 transition-colors"
+                    >
+                      Remover
+                    </button>
                   </div>
                 ))}
+
                 {unit.sectors.length === 0 && (
-                  <p className="px-5 py-4 text-xs text-slate-400 text-center">Nenhum setor cadastrado</p>
+                  <p className="px-5 py-4 text-xs text-slate-400 text-center">
+                    Nenhum setor cadastrado
+                  </p>
                 )}
               </div>
             </Card>
@@ -771,31 +877,136 @@ function Unidades({ products }: { products: Product[] }) {
         })}
       </div>
 
-      <Modal open={modal === 'add-unit'} onClose={() => setModal(null)} title="Nova Unidade">
+      <Modal
+        open={modal === 'add-unit'}
+        onClose={() => setModal(null)}
+        title="Nova Unidade"
+      >
         <div className="space-y-4">
-          <Input label="Nome da Unidade" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="Unidade Norte" />
-          <Input label="Código" value={form.code} onChange={e => setForm(f => ({ ...f, code: e.target.value }))} placeholder="UN-N" />
+          <Input
+            label="Nome da Unidade"
+            value={form.name}
+            onChange={e =>
+              setForm(f => ({
+                ...f,
+                name: e.target.value,
+              }))
+            }
+            placeholder="Unidade Norte"
+          />
+
+          <Input
+            label="Código"
+            value={form.code}
+            onChange={e =>
+              setForm(f => ({
+                ...f,
+                code: e.target.value,
+              }))
+            }
+            placeholder="UN-N"
+          />
+
           <div className="flex gap-3 pt-2">
-            <button onClick={addUnit} className="flex-1 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">Salvar</button>
-            <button onClick={() => setModal(null)} className="flex-1 py-2.5 border border-slate-200 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors">Cancelar</button>
+            <button
+              onClick={addUnit}
+              disabled={!form.name.trim() || !form.code.trim()}
+              className="flex-1 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Salvar
+            </button>
+
+            <button
+              onClick={() => setModal(null)}
+              className="flex-1 py-2.5 border border-slate-200 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors"
+            >
+              Cancelar
+            </button>
           </div>
         </div>
       </Modal>
 
-      <Modal open={modal === 'add-sector'} onClose={() => setModal(null)} title={`Novo Setor — ${selectedUnit?.name}`}>
+      <Modal
+        open={modal === 'add-sector'}
+        onClose={() => setModal(null)}
+        title={`Novo Setor — ${selectedUnit?.name || ''}`}
+      >
         <div className="space-y-4">
-          <Input label="Nome do Setor" value={sectorForm.name} onChange={e => setSectorForm({ name: e.target.value })} placeholder="Almoxarifado" />
+          <Input
+            label="Nome do Setor"
+            value={sectorForm.name}
+            onChange={e =>
+              setSectorForm({
+                name: e.target.value,
+              })
+            }
+            placeholder="Almoxarifado"
+          />
+
           <div className="flex gap-3 pt-2">
-            <button onClick={addSector} className="flex-1 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">Salvar</button>
-            <button onClick={() => setModal(null)} className="flex-1 py-2.5 border border-slate-200 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors">Cancelar</button>
+            <button
+              onClick={addSector}
+              disabled={!sectorForm.name.trim()}
+              className="flex-1 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Salvar
+            </button>
+
+            <button
+              onClick={() => setModal(null)}
+              className="flex-1 py-2.5 border border-slate-200 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors"
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      <Modal
+        open={modal === 'del-unit'}
+        onClose={() => setModal(null)}
+        title="Excluir Unidade"
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-slate-600">
+            Confirma a exclusão da unidade{' '}
+            <strong>{selectedUnit?.name}</strong>?
+          </p>
+
+          {selectedUnit && selectedUnit.sectors.length > 0 && (
+            <div className="bg-orange-50 border border-orange-200 rounded-lg px-3 py-2">
+              <p className="text-xs text-orange-700">
+                Esta unidade possui {selectedUnit.sectors.length} setor
+                {selectedUnit.sectors.length !== 1 ? 'es' : ''}.
+                A exclusão também removerá esses setores da lista.
+              </p>
+            </div>
+          )}
+
+          <p className="text-xs text-red-600 bg-red-50 px-3 py-2 rounded">
+            Esta ação remove a unidade da lista atual.
+          </p>
+
+          <div className="flex gap-3 pt-2">
+            <button
+              onClick={deleteUnit}
+              className="flex-1 py-2.5 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors"
+            >
+              Confirmar Exclusão
+            </button>
+
+            <button
+              onClick={() => setModal(null)}
+              className="flex-1 py-2.5 border border-slate-200 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors"
+            >
+              Cancelar
+            </button>
           </div>
         </div>
       </Modal>
     </div>
   );
 }
-
-// ─── Usuários ─────────────────────────────────────────────────────────────────
 function Usuarios() {
   const [users, setUsers] = useState<User[]>(initialUsers);
   const [modal, setModal] = useState<null | 'add' | 'edit' | 'del'>(null);
