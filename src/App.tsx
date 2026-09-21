@@ -12,7 +12,7 @@ type View = 'dashboard' | 'produtos' | 'classes' | 'movimentacoes' | 'unidades' 
 
 const roleLabel: Record<string, string> = { admin: 'Administrador', gestor: 'Gestor', operador: 'Operador' };
 const roleColor: Record<string, string> = { admin: 'bg-purple-100 text-purple-700', gestor: 'bg-blue-100 text-blue-700', operador: 'bg-slate-100 text-slate-600' };
-const movTypeLabel: Record<string, string> = { entrada: 'Entrada', saida: 'SaÃ­da', transferencia: 'TransferÃªncia' };
+const movTypeLabel: Record<string, string> = { entrada: 'Entrada', saida: 'Saída', transferencia: 'Transferência' };
 const movTypeColor: Record<string, string> = { entrada: 'bg-green-100 text-green-700', saida: 'bg-red-100 text-red-700', transferencia: 'bg-blue-100 text-blue-700' };
 
 type DashboardData = {
@@ -30,12 +30,12 @@ type DashboardData = {
 };
 
 const NAV_ITEMS: { key: View; label: string; icon: string }[] = [
-  { key: 'dashboard', label: 'Dashboard', icon: 'â–¦' },
-  { key: 'produtos', label: 'Produtos', icon: 'âŠž' },
-  { key: 'classes', label: 'Classes', icon: 'â—ˆ' },
-  { key: 'movimentacoes', label: 'MovimentaÃ§Ãµes', icon: 'â‡„' },
-  { key: 'unidades', label: 'Unidades e Setores', icon: 'âŠ•' },
-  { key: 'usuarios', label: 'UsuÃ¡rios', icon: 'â—¯' },
+  { key: 'dashboard', label: 'Dashboard', icon: '▦' },
+  { key: 'produtos', label: 'Produtos', icon: '⊞' },
+  { key: 'classes', label: 'Classes', icon: '◈' },
+  { key: 'movimentacoes', label: 'Movimentações', icon: '⇄' },
+  { key: 'unidades', label: 'Unidades e Setores', icon: '⊕' },
+  { key: 'usuarios', label: 'Usuários', icon: '◯' },
 ];
 
 function Badge({ children, className = '' }: { children: React.ReactNode; className?: string }) {
@@ -120,7 +120,7 @@ function Modal({ open, onClose, title, children }: { open: boolean; onClose: () 
   );
 }
 
-// â”€â”€â”€ Dashboard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Dashboard ───────────────────────────────────────────────────────────────
 function Dashboard({
   products,
   movements,
@@ -132,6 +132,7 @@ function Dashboard({
 }) {
   const totalItems = dashboardData.produtos;
   const criticalItems = products.filter(p => p.active && p.currentStock <= p.minStock).length;
+  const totalStock = dashboardData.estoque_total;
   const monthMov = movements.filter(m => m.date.startsWith('2026-09')).length;
 
   const stockByClass = productClasses.map(c => ({
@@ -163,19 +164,19 @@ function Dashboard({
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-bold text-slate-900">Dashboard</h2>
-        <p className="text-sm text-slate-500 mt-0.5">Setembro 2026 â€” VisÃ£o geral do estoque</p>
+        <p className="text-sm text-slate-500 mt-0.5">Setembro 2026 — Visão geral do estoque</p>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard label="Produtos Ativos" value={totalItems} sub="cadastros ativos" color="#2563eb" />
         <StatCard label="Estoque Total" value={totalStock.toLocaleString()} sub="unidades em estoque" color="#16a34a" />
-        <StatCard label="Itens CrÃ­ticos" value={criticalItems} sub="abaixo do mÃ­nimo" color="#dc2626" />
-        <StatCard label="MovimentaÃ§Ãµes" value={monthMov} sub="no mÃªs atual" color="#d97706" />
+        <StatCard label="Itens Críticos" value={criticalItems} sub="abaixo do mínimo" color="#dc2626" />
+        <StatCard label="Movimentações" value={monthMov} sub="no mês atual" color="#d97706" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <Card className="lg:col-span-2 p-5">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">MovimentaÃ§Ãµes â€” Setembro 2026</p>
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">Movimentações — Setembro 2026</p>
           <ResponsiveContainer width="100%" height={200}>
             <LineChart data={movByDay}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
@@ -184,7 +185,7 @@ function Dashboard({
               <Tooltip contentStyle={{ fontSize: 12, border: '1px solid #e2e8f0', borderRadius: 8 }} />
               <Legend wrapperStyle={{ fontSize: 12 }} />
               <Line type="monotone" dataKey="entrada" stroke="#16a34a" strokeWidth={2} dot={false} name="Entrada" />
-              <Line type="monotone" dataKey="saida" stroke="#dc2626" strokeWidth={2} dot={false} name="SaÃ­da" />
+              <Line type="monotone" dataKey="saida" stroke="#dc2626" strokeWidth={2} dot={false} name="Saída" />
             </LineChart>
           </ResponsiveContainer>
         </Card>
@@ -230,7 +231,7 @@ function Dashboard({
         </Card>
 
         <Card className="p-5">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">DistribuiÃ§Ã£o por unidade</p>
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">Distribuição por unidade</p>
           {dashboardData.distribuicao_por_unidade.length === 0 ? (
             <p className="text-sm text-slate-400 py-4 text-center">Nenhum estoque cadastrado</p>
           ) : (
@@ -257,7 +258,7 @@ function Dashboard({
   );
 }
 
-// â”€â”€â”€ Produtos â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Produtos ────────────────────────────────────────────────────────────────
 function Produtos({ products, setProducts }: { products: Product[]; setProducts: React.Dispatch<React.SetStateAction<Product[]>> }) {
   const [search, setSearch] = useState('');
   const [filterClass, setFilterClass] = useState('');
@@ -302,7 +303,7 @@ function Produtos({ products, setProducts }: { products: Product[]; setProducts:
 
   const stockStatus = (p: Product) => {
     if (p.currentStock === 0) return <Badge className="bg-red-100 text-red-700">Esgotado</Badge>;
-    if (p.currentStock <= p.minStock) return <Badge className="bg-orange-100 text-orange-700">CrÃ­tico</Badge>;
+    if (p.currentStock <= p.minStock) return <Badge className="bg-orange-100 text-orange-700">Crítico</Badge>;
     return <Badge className="bg-green-100 text-green-700">Normal</Badge>;
   };
 
@@ -320,7 +321,7 @@ function Produtos({ products, setProducts }: { products: Product[]; setProducts:
 
       <Card className="p-4">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <Input label="Buscar" placeholder="Nome ou cÃ³digo..." value={search} onChange={e => setSearch(e.target.value)} />
+          <Input label="Buscar" placeholder="Nome ou código..." value={search} onChange={e => setSearch(e.target.value)} />
           <Select label="Classe" value={filterClass} onChange={e => setFilterClass(e.target.value)}>
             <option value="">Todas as classes</option>
             {productClasses.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -338,14 +339,14 @@ function Produtos({ products, setProducts }: { products: Product[]; setProducts:
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-slate-100">
-                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">CÃ³digo</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Código</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Nome</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Classe</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Unidade</th>
                 <th className="text-right px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Estoque</th>
-                <th className="text-right px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">MÃ­nimo</th>
+                <th className="text-right px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Mínimo</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Status</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">SituaÃ§Ã£o</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Situação</th>
                 <th className="px-4 py-3" />
               </tr>
             </thead>
@@ -392,17 +393,17 @@ function Produtos({ products, setProducts }: { products: Product[]; setProducts:
       <Modal open={modal === 'add' || modal === 'edit'} onClose={() => setModal(null)} title={modal === 'add' ? 'Novo Produto' : 'Editar Produto'}>
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
-            <Input label="CÃ³digo" value={form.code || ''} onChange={e => setForm(f => ({ ...f, code: e.target.value }))} placeholder="ME-001" />
+            <Input label="Código" value={form.code || ''} onChange={e => setForm(f => ({ ...f, code: e.target.value }))} placeholder="ME-001" />
             <Select label="Classe" value={form.classId || ''} onChange={e => setForm(f => ({ ...f, classId: Number(e.target.value) }))}>
               {productClasses.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
             </Select>
           </div>
           <Input label="Nome" value={form.name || ''} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="Nome do produto" />
-          <Textarea label="DescriÃ§Ã£o" value={form.description || ''} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="DescriÃ§Ã£o detalhada..." />
+          <Textarea label="Descrição" value={form.description || ''} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="Descrição detalhada..." />
           <div className="grid grid-cols-3 gap-3">
             <Input label="Unidade de Medida" value={form.unit || ''} onChange={e => setForm(f => ({ ...f, unit: e.target.value }))} placeholder="Resma" />
             <Input label="Estoque Atual" type="number" value={form.currentStock ?? 0} onChange={e => setForm(f => ({ ...f, currentStock: Number(e.target.value) }))} />
-            <Input label="Estoque MÃ­nimo" type="number" value={form.minStock ?? 0} onChange={e => setForm(f => ({ ...f, minStock: Number(e.target.value) }))} />
+            <Input label="Estoque Mínimo" type="number" value={form.minStock ?? 0} onChange={e => setForm(f => ({ ...f, minStock: Number(e.target.value) }))} />
           </div>
           <div className="flex items-center gap-2">
             <input type="checkbox" id="active" checked={form.active ?? true} onChange={e => setForm(f => ({ ...f, active: e.target.checked }))} className="rounded" />
@@ -416,12 +417,12 @@ function Produtos({ products, setProducts }: { products: Product[]; setProducts:
       </Modal>
 
       <Modal open={modal === 'del'} onClose={() => setModal(null)} title="Excluir Produto">
-        <p className="text-sm text-slate-600 mb-2">Confirma exclusÃ£o de <strong>{selected?.name}</strong>?</p>
-        <p className="text-xs text-red-600 bg-red-50 px-3 py-2 rounded mb-4">Esta aÃ§Ã£o nÃ£o pode ser desfeita. O produto serÃ¡ removido permanentemente.</p>
+        <p className="text-sm text-slate-600 mb-2">Confirma exclusão de <strong>{selected?.name}</strong>?</p>
+        <p className="text-xs text-red-600 bg-red-50 px-3 py-2 rounded mb-4">Esta ação não pode ser desfeita. O produto será removido permanentemente.</p>
         <div className="flex gap-3">
           <button onClick={() => { setProducts(prev => prev.filter(p => p.id !== selected?.id)); setModal(null); }}
             className="flex-1 py-2.5 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors">
-            Confirmar ExclusÃ£o
+            Confirmar Exclusão
           </button>
           <button onClick={() => setModal(null)} className="flex-1 py-2.5 border border-slate-200 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors">Cancelar</button>
         </div>
@@ -430,7 +431,7 @@ function Produtos({ products, setProducts }: { products: Product[]; setProducts:
   );
 }
 
-// â”€â”€â”€ Classes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Classes ─────────────────────────────────────────────────────────────────
 function Classes({ products }: { products: Product[] }) {
   const [classes, setClasses] = useState<ProductClass[]>(productClasses);
   const [modal, setModal] = useState<null | 'add' | 'edit' | 'del'>(null);
@@ -498,7 +499,7 @@ function Classes({ products }: { products: Product[] }) {
         <div className="space-y-4">
           <div className="flex gap-3 items-end">
             <div className="flex-1">
-              <Input label="Nome da Classe" value={form.name || ''} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="Material de EscritÃ³rio" />
+              <Input label="Nome da Classe" value={form.name || ''} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="Material de Escritório" />
             </div>
             <label className="flex flex-col gap-1">
               <span className="text-xs font-medium text-slate-600 uppercase tracking-wide">Cor</span>
@@ -506,7 +507,7 @@ function Classes({ products }: { products: Product[] }) {
                 className="h-10 w-14 rounded border border-slate-200 cursor-pointer p-0.5" />
             </label>
           </div>
-          <Textarea label="DescriÃ§Ã£o" value={form.description || ''} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="DescriÃ§Ã£o da classe..." />
+          <Textarea label="Descrição" value={form.description || ''} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="Descrição da classe..." />
           <div className="flex gap-3 pt-2">
             <button onClick={save} className="flex-1 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">Salvar</button>
             <button onClick={() => setModal(null)} className="flex-1 py-2.5 border border-slate-200 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors">Cancelar</button>
@@ -515,7 +516,7 @@ function Classes({ products }: { products: Product[] }) {
       </Modal>
 
       <Modal open={modal === 'del'} onClose={() => setModal(null)} title="Excluir Classe">
-        <p className="text-sm text-slate-600 mb-4">Confirma exclusÃ£o da classe <strong>{selected?.name}</strong>?</p>
+        <p className="text-sm text-slate-600 mb-4">Confirma exclusão da classe <strong>{selected?.name}</strong>?</p>
         <div className="flex gap-3">
           <button onClick={() => { setClasses(prev => prev.filter(c => c.id !== selected?.id)); setModal(null); }}
             className="flex-1 py-2.5 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors">
@@ -528,7 +529,7 @@ function Classes({ products }: { products: Product[] }) {
   );
 }
 
-// â”€â”€â”€ MovimentaÃ§Ãµes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Movimentações ────────────────────────────────────────────────────────────
 function Movimentacoes({ products, movements, setMovements, users }: {
   products: Product[]; movements: Movement[]; setMovements: React.Dispatch<React.SetStateAction<Movement[]>>; users: User[];
 }) {
@@ -582,22 +583,22 @@ function Movimentacoes({ products, movements, setMovements, users }: {
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold text-slate-900">MovimentaÃ§Ãµes</h2>
+          <h2 className="text-xl font-bold text-slate-900">Movimentações</h2>
           <p className="text-sm text-slate-500 mt-0.5">{filtered.length} registro{filtered.length !== 1 ? 's' : ''}</p>
         </div>
         <button onClick={() => setModal(true)} className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
-          + Registrar MovimentaÃ§Ã£o
+          + Registrar Movimentação
         </button>
       </div>
 
       <Card className="p-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <Input label="Buscar produto" placeholder="Nome ou cÃ³digo..." value={search} onChange={e => setSearch(e.target.value)} />
+          <Input label="Buscar produto" placeholder="Nome ou código..." value={search} onChange={e => setSearch(e.target.value)} />
           <Select label="Tipo" value={filterType} onChange={e => setFilterType(e.target.value)}>
             <option value="">Todos os tipos</option>
             <option value="entrada">Entrada</option>
-            <option value="saida">SaÃ­da</option>
-            <option value="transferencia">TransferÃªncia</option>
+            <option value="saida">Saída</option>
+            <option value="transferencia">Transferência</option>
           </Select>
         </div>
       </Card>
@@ -612,8 +613,8 @@ function Movimentacoes({ products, movements, setMovements, users }: {
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Produto</th>
                 <th className="text-right px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Qtd.</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Destino / Origem</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">ResponsÃ¡vel</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">ObservaÃ§Ãµes</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Responsável</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Observações</th>
               </tr>
             </thead>
             <tbody>
@@ -628,13 +629,13 @@ function Movimentacoes({ products, movements, setMovements, users }: {
                     <td className="px-4 py-3 font-mono text-xs text-slate-500 whitespace-nowrap">{m.date}</td>
                     <td className="px-4 py-3"><Badge className={movTypeColor[m.type]}>{movTypeLabel[m.type]}</Badge></td>
                     <td className="px-4 py-3">
-                      <p className="font-medium text-slate-800">{p?.name || 'â€”'}</p>
+                      <p className="font-medium text-slate-800">{p?.name || '—'}</p>
                       <p className="text-xs text-slate-400 font-mono">{p?.code}</p>
                     </td>
                     <td className="px-4 py-3 text-right font-mono font-bold text-slate-900">{m.quantity}</td>
                     <td className="px-4 py-3 text-xs text-slate-600">
                       {m.type === 'transferencia'
-                        ? <>{fromUnit?.code} â†’ {toUnit?.code}</>
+                        ? <>{fromUnit?.code} → {toUnit?.code}</>
                         : <>{unit?.name}{sector ? ` / ${sector.name}` : ''}</>
                       }
                     </td>
@@ -644,23 +645,23 @@ function Movimentacoes({ products, movements, setMovements, users }: {
                 );
               })}
               {filtered.length === 0 && (
-                <tr><td colSpan={7} className="px-4 py-10 text-center text-slate-400 text-sm">Nenhuma movimentaÃ§Ã£o encontrada</td></tr>
+                <tr><td colSpan={7} className="px-4 py-10 text-center text-slate-400 text-sm">Nenhuma movimentação encontrada</td></tr>
               )}
             </tbody>
           </table>
         </div>
       </Card>
 
-      <Modal open={modal} onClose={() => setModal(false)} title="Registrar MovimentaÃ§Ã£o">
+      <Modal open={modal} onClose={() => setModal(false)} title="Registrar Movimentação">
         <div className="space-y-4">
-          <Select label="Tipo de MovimentaÃ§Ã£o" value={form.type || 'entrada'} onChange={e => setForm(f => ({ ...f, type: e.target.value as Movement['type'] }))}>
+          <Select label="Tipo de Movimentação" value={form.type || 'entrada'} onChange={e => setForm(f => ({ ...f, type: e.target.value as Movement['type'] }))}>
             <option value="entrada">Entrada</option>
-            <option value="saida">SaÃ­da</option>
-            <option value="transferencia">TransferÃªncia</option>
+            <option value="saida">Saída</option>
+            <option value="transferencia">Transferência</option>
           </Select>
           <div className="grid grid-cols-2 gap-3">
             <Select label="Produto" value={form.productId || ''} onChange={e => setForm(f => ({ ...f, productId: Number(e.target.value) }))}>
-              {products.filter(p => p.active).map(p => <option key={p.id} value={p.id}>{p.code} â€” {p.name}</option>)}
+              {products.filter(p => p.active).map(p => <option key={p.id} value={p.id}>{p.code} — {p.name}</option>)}
             </Select>
             <Input label="Quantidade" type="number" min={1} value={form.quantity || ''} onChange={e => setForm(f => ({ ...f, quantity: Number(e.target.value) }))} />
           </div>
@@ -683,8 +684,8 @@ function Movimentacoes({ products, movements, setMovements, users }: {
               </Select>
             </div>
           )}
-          <Input label="ResponsÃ¡vel" value={form.responsible || ''} onChange={e => setForm(f => ({ ...f, responsible: e.target.value }))} placeholder="Nome do responsÃ¡vel" />
-          <Textarea label="ObservaÃ§Ãµes / NF" value={form.notes || ''} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} placeholder="NÃºmero de nota fiscal, observaÃ§Ãµes..." />
+          <Input label="Responsável" value={form.responsible || ''} onChange={e => setForm(f => ({ ...f, responsible: e.target.value }))} placeholder="Nome do responsável" />
+          <Textarea label="Observações / NF" value={form.notes || ''} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} placeholder="Número de nota fiscal, observações..." />
           <div className="flex gap-3 pt-2">
             <button onClick={save} className="flex-1 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">Registrar</button>
             <button onClick={() => setModal(false)} className="flex-1 py-2.5 border border-slate-200 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors">Cancelar</button>
@@ -695,7 +696,7 @@ function Movimentacoes({ products, movements, setMovements, users }: {
   );
 }
 
-// â”€â”€â”€ Unidades â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Unidades ─────────────────────────────────────────────────────────────────
 function Unidades({ products }: { products: Product[] }) {
   const [unitsList, setUnitsList] = useState<Unit[]>(units);
   const [modal, setModal] = useState<null | 'add-unit' | 'add-sector'>(null);
@@ -725,7 +726,7 @@ function Unidades({ products }: { products: Product[] }) {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-bold text-slate-900">Unidades e Setores</h2>
-          <p className="text-sm text-slate-500 mt-0.5">{unitsList.length} unidades â€¢ {unitsList.flatMap(u => u.sectors).length} setores</p>
+          <p className="text-sm text-slate-500 mt-0.5">{unitsList.length} unidades • {unitsList.flatMap(u => u.sectors).length} setores</p>
         </div>
         <button onClick={() => { setForm({ name: '', code: '' }); setModal('add-unit'); }}
           className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
@@ -735,6 +736,7 @@ function Unidades({ products }: { products: Product[] }) {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {unitsList.map(unit => {
+          const totalStock = dashboardData.estoque_total;
           return (
             <Card key={unit.id} className="overflow-hidden">
               <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
@@ -773,7 +775,7 @@ function Unidades({ products }: { products: Product[] }) {
       <Modal open={modal === 'add-unit'} onClose={() => setModal(null)} title="Nova Unidade">
         <div className="space-y-4">
           <Input label="Nome da Unidade" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="Unidade Norte" />
-          <Input label="CÃ³digo" value={form.code} onChange={e => setForm(f => ({ ...f, code: e.target.value }))} placeholder="UN-N" />
+          <Input label="Código" value={form.code} onChange={e => setForm(f => ({ ...f, code: e.target.value }))} placeholder="UN-N" />
           <div className="flex gap-3 pt-2">
             <button onClick={addUnit} className="flex-1 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">Salvar</button>
             <button onClick={() => setModal(null)} className="flex-1 py-2.5 border border-slate-200 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors">Cancelar</button>
@@ -781,7 +783,7 @@ function Unidades({ products }: { products: Product[] }) {
         </div>
       </Modal>
 
-      <Modal open={modal === 'add-sector'} onClose={() => setModal(null)} title={`Novo Setor â€” ${selectedUnit?.name}`}>
+      <Modal open={modal === 'add-sector'} onClose={() => setModal(null)} title={`Novo Setor — ${selectedUnit?.name}`}>
         <div className="space-y-4">
           <Input label="Nome do Setor" value={sectorForm.name} onChange={e => setSectorForm({ name: e.target.value })} placeholder="Almoxarifado" />
           <div className="flex gap-3 pt-2">
@@ -794,7 +796,7 @@ function Unidades({ products }: { products: Product[] }) {
   );
 }
 
-// â”€â”€â”€ UsuÃ¡rios â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Usuários ─────────────────────────────────────────────────────────────────
 function Usuarios() {
   const [users, setUsers] = useState<User[]>(initialUsers);
   const [modal, setModal] = useState<null | 'add' | 'edit' | 'del'>(null);
@@ -818,11 +820,11 @@ function Usuarios() {
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold text-slate-900">UsuÃ¡rios</h2>
-          <p className="text-sm text-slate-500 mt-0.5">{users.length} usuÃ¡rios cadastrados</p>
+          <h2 className="text-xl font-bold text-slate-900">Usuários</h2>
+          <p className="text-sm text-slate-500 mt-0.5">{users.length} usuários cadastrados</p>
         </div>
         <button onClick={openAdd} className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">
-          + Novo UsuÃ¡rio
+          + Novo Usuário
         </button>
       </div>
 
@@ -876,7 +878,7 @@ function Usuarios() {
         </div>
       </Card>
 
-      <Modal open={modal === 'add' || modal === 'edit'} onClose={() => setModal(null)} title={modal === 'add' ? 'Novo UsuÃ¡rio' : 'Editar UsuÃ¡rio'}>
+      <Modal open={modal === 'add' || modal === 'edit'} onClose={() => setModal(null)} title={modal === 'add' ? 'Novo Usuário' : 'Editar Usuário'}>
         <div className="space-y-4">
           <Input label="Nome Completo" value={form.name || ''} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="Carlos Andrade" />
           <Input label="E-mail" type="email" value={form.email || ''} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} placeholder="usuario@empresa.gov.br" />
@@ -893,7 +895,7 @@ function Usuarios() {
           </div>
           <div className="flex items-center gap-2">
             <input type="checkbox" id="userActive" checked={form.active ?? true} onChange={e => setForm(f => ({ ...f, active: e.target.checked }))} className="rounded" />
-            <label htmlFor="userActive" className="text-sm text-slate-700">UsuÃ¡rio ativo</label>
+            <label htmlFor="userActive" className="text-sm text-slate-700">Usuário ativo</label>
           </div>
           <div className="flex gap-3 pt-2">
             <button onClick={save} className="flex-1 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors">Salvar</button>
@@ -902,8 +904,8 @@ function Usuarios() {
         </div>
       </Modal>
 
-      <Modal open={modal === 'del'} onClose={() => setModal(null)} title="Excluir UsuÃ¡rio">
-        <p className="text-sm text-slate-600 mb-4">Confirma exclusÃ£o de <strong>{selected?.name}</strong>?</p>
+      <Modal open={modal === 'del'} onClose={() => setModal(null)} title="Excluir Usuário">
+        <p className="text-sm text-slate-600 mb-4">Confirma exclusão de <strong>{selected?.name}</strong>?</p>
         <div className="flex gap-3">
           <button onClick={() => { setUsers(prev => prev.filter(u => u.id !== selected?.id)); setModal(null); }}
             className="flex-1 py-2.5 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors">
@@ -916,7 +918,7 @@ function Usuarios() {
   );
 }
 
-// â”€â”€â”€ Root App â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Root App ─────────────────────────────────────────────────────────────────
 export default function App() {
   const [view, setView] = useState<View>('dashboard');
   const [products, setProducts] = useState(initialProducts);
@@ -959,7 +961,7 @@ export default function App() {
           {sidebarOpen && (
             <div className="overflow-hidden">
               <p className="text-white text-xs font-bold truncate">Gestor de Estoque</p>
-              <p className="text-slate-500 text-xs truncate">v1.0 â€” Administrativo</p>
+              <p className="text-slate-500 text-xs truncate">v1.0 — Administrativo</p>
             </div>
           )}
         </div>
@@ -986,7 +988,7 @@ export default function App() {
             onClick={() => setSidebarOpen(o => !o)}
             className="w-full flex items-center gap-3 px-2.5 py-2 rounded-lg text-slate-500 hover:text-slate-300 hover:bg-slate-800 transition-colors text-xs"
           >
-            <span className="text-base shrink-0">{sidebarOpen ? 'â—' : 'â–·'}</span>
+            <span className="text-base shrink-0">{sidebarOpen ? '◁' : '▷'}</span>
             {sidebarOpen && <span>Recolher</span>}
           </button>
         </div>
@@ -997,7 +999,7 @@ export default function App() {
         {/* Topbar */}
         <header className="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2 text-xs text-slate-400">
-            <span>InÃ­cio</span>
+            <span>Início</span>
             <span>/</span>
             <span className="text-slate-700 font-medium capitalize">{NAV_ITEMS.find(n => n.key === view)?.label}</span>
           </div>
@@ -1005,7 +1007,7 @@ export default function App() {
             {products.filter(p => p.active && p.currentStock <= p.minStock).length > 0 && (
               <button onClick={() => setView('produtos')} className="flex items-center gap-1.5 text-xs text-orange-600 bg-orange-50 px-2.5 py-1.5 rounded-full border border-orange-200 hover:bg-orange-100 transition-colors">
                 <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
-                {products.filter(p => p.active && p.currentStock <= p.minStock).length} itens crÃ­ticos
+                {products.filter(p => p.active && p.currentStock <= p.minStock).length} itens críticos
               </button>
             )}
             <div className="flex items-center gap-2 border-l border-slate-200 pl-3">
