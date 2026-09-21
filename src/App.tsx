@@ -736,7 +736,6 @@ function Unidades({ products }: { products: Product[] }) {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {unitsList.map(unit => {
-          const totalStock = dashboardData.estoque_total;
           return (
             <Card key={unit.id} className="overflow-hidden">
               <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
