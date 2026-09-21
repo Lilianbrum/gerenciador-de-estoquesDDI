@@ -114,23 +114,7 @@ export const initialProducts: Product[] = [
   { id: 12, code: 'AL-002', name: 'Açúcar Refinado 5kg', classId: 6, unit: 'Saco', minStock: 20, currentStock: 12, description: 'Açúcar refinado embalagem 5kg', active: true, createdAt: '2025-04-10' },
 ];
 
-export const initialMovements: Movement[] = [
-  { id: 1, type: 'entrada', productId: 1, quantity: 200, unitId: 1, sectorId: 1, responsible: 'Carlos Andrade', notes: 'NF 4521 - Fornecedor Papelaria ABC', date: '2026-09-01', userId: 2 },
-  { id: 2, type: 'saida', productId: 1, quantity: 30, unitId: 2, sectorId: 6, responsible: 'Fernanda Lima', notes: 'Distribuição mensal UN-N Administrativo', date: '2026-09-03', userId: 3 },
-  { id: 3, type: 'saida', productId: 4, quantity: 50, unitId: 1, sectorId: 2, responsible: 'Carlos Andrade', notes: 'Reposição RH', date: '2026-09-04', userId: 2 },
-  { id: 4, type: 'entrada', productId: 5, quantity: 20, unitId: 1, sectorId: 1, responsible: 'Carlos Andrade', notes: 'NF 4522 - Distribuidora Clean', date: '2026-09-05', userId: 2 },
-  { id: 5, type: 'saida', productId: 2, quantity: 5, unitId: 3, sectorId: 9, responsible: 'João Alves', notes: 'Distribuição UN-S', date: '2026-09-06', userId: 4 },
-  { id: 6, type: 'transferencia', productId: 9, quantity: 10, fromUnitId: 1, toUnitId: 2, responsible: 'Carlos Andrade', notes: 'Transferência de estoque excedente', date: '2026-09-08', userId: 2 },
-  { id: 7, type: 'entrada', productId: 10, quantity: 30, unitId: 1, sectorId: 1, responsible: 'Carlos Andrade', notes: 'NF 4530 - EPI Brasil', date: '2026-09-10', userId: 2 },
-  { id: 8, type: 'saida', productId: 11, quantity: 10, unitId: 1, sectorId: 3, responsible: 'Maria Santos', notes: 'Copa financeiro', date: '2026-09-11', userId: 5 },
-  { id: 9, type: 'saida', productId: 5, quantity: 3, unitId: 4, sectorId: 10, responsible: 'Pedro Costa', notes: 'Reposição UN-L', date: '2026-09-12', userId: 4 },
-  { id: 10, type: 'entrada', productId: 12, quantity: 20, unitId: 1, sectorId: 1, responsible: 'Carlos Andrade', notes: 'NF 4535 - Atacadão', date: '2026-09-15', userId: 2 },
-  { id: 11, type: 'saida', productId: 7, quantity: 5, unitId: 2, sectorId: 7, responsible: 'Fernanda Lima', notes: 'Novos colaboradores TI UN-N', date: '2026-09-16', userId: 3 },
-  { id: 12, type: 'saida', productId: 6, quantity: 6, unitId: 3, sectorId: 8, responsible: 'João Alves', notes: 'Higienização mensal', date: '2026-09-18', userId: 4 },
-  { id: 13, type: 'entrada', productId: 2, quantity: 10, unitId: 1, sectorId: 1, responsible: 'Carlos Andrade', notes: 'NF 4540 - Papelaria ABC', date: '2026-09-19', userId: 2 },
-  { id: 14, type: 'saida', productId: 9, quantity: 15, unitId: 1, sectorId: 4, responsible: 'Maria Santos', notes: 'EPI TI', date: '2026-09-20', userId: 5 },
-  { id: 15, type: 'transferencia', productId: 1, quantity: 40, fromUnitId: 1, toUnitId: 3, responsible: 'Carlos Andrade', notes: 'Complemento estoque UN-S', date: '2026-09-21', userId: 2 },
-];
+export const initialMovements: Movement[] = [];
 
 export const initialUsers: User[] = [
   { id: 1, name: 'Admin Sistema', email: 'admin@empresa.gov.br', role: 'admin', active: true, createdAt: '2025-01-01' },
