@@ -1,0 +1,10 @@
+{
+  "description": "Manage inventory efficiently with real-time dashboards, track supply movements, and organize products by categories and users for streamlined operations.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
