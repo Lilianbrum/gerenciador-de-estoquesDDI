@@ -1046,7 +1046,6 @@ function Usuarios() {
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Nome</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">E-mail</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Perfil</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Unidade</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Status</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">Cadastro</th>
                 <th className="px-4 py-3" />
@@ -1054,7 +1053,6 @@ function Usuarios() {
             </thead>
             <tbody>
               {users.map(u => {
-                const unit = units.find(x => x.id === u.unitId);
                 return (
                   <tr key={u.id} className="border-b border-slate-50 hover:bg-slate-50/60 transition-colors">
                     <td className="px-4 py-3">
@@ -1067,7 +1065,6 @@ function Usuarios() {
                     </td>
                     <td className="px-4 py-3 text-slate-500 text-xs font-mono">{u.email}</td>
                     <td className="px-4 py-3"><Badge className={roleColor[u.role]}>{roleLabel[u.role]}</Badge></td>
-                    <td className="px-4 py-3 text-slate-600 text-xs">{unit?.name || 'Todas'}</td>
                     <td className="px-4 py-3">
                       <Badge className={u.active ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'}>
                         {u.active ? 'Ativo' : 'Inativo'}
@@ -1092,17 +1089,11 @@ function Usuarios() {
         <div className="space-y-4">
           <Input label="Nome Completo" value={form.name || ''} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="Carlos Andrade" />
           <Input label="E-mail" type="email" value={form.email || ''} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} placeholder="usuario@empresa.gov.br" />
-          <div className="grid grid-cols-2 gap-3">
-            <Select label="Perfil" value={form.role || 'operador'} onChange={e => setForm(f => ({ ...f, role: e.target.value as User['role'] }))}>
-              <option value="admin">Administrador</option>
-              <option value="gestor">Gestor</option>
-              <option value="operador">Operador</option>
-            </Select>
-            <Select label="Unidade" value={form.unitId || ''} onChange={e => setForm(f => ({ ...f, unitId: e.target.value ? Number(e.target.value) : undefined }))}>
-              <option value="">Todas</option>
-              {units.map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
-            </Select>
-          </div>
+          <Select label="Perfil" value={form.role || 'operador'} onChange={e => setForm(f => ({ ...f, role: e.target.value as User['role'] }))}>
+            <option value="admin">Administrador</option>
+            <option value="gestor">Gestor</option>
+            <option value="operador">Operador</option>
+          </Select>
           <div className="flex items-center gap-2">
             <input type="checkbox" id="userActive" checked={form.active ?? true} onChange={e => setForm(f => ({ ...f, active: e.target.checked }))} className="rounded" />
             <label htmlFor="userActive" className="text-sm text-slate-700">Usuário ativo</label>
